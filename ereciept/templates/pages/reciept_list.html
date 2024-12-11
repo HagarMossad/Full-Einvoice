@@ -1,0 +1,187 @@
+{% extends 'pages/base.html'%} 
+{% load i18n %} 
+{% block content %} 
+{% load static %}
+<!-- Custom style  -->
+<style>
+    .text-center{
+        max-width: 95%;
+        margin-left: 2rem;
+    }   
+   
+    /* div{
+       padding: 5px 5px 5px 5px; 
+   } */
+</style>
+<div class="container"> 
+    <div class="text-center">
+
+        <div class="row">
+            <div class="col-md-6">
+                <a href="#uploadFile" class="btn btn-success" data-toggle="modal">
+                   <span>{% trans 'upload' %}</span></a>
+            </div>
+                <div class="col-md-6"> <a  class="btn btn-primary" href="{% url 'new_reciept'%} "  id ="createnew"> {% trans "Create New" %} </a> </div>
+        </div>
+        <div class="row">
+
+           <form>
+
+                <div class="row" >
+                    <div class="col-md-3" >
+                              <input type="text" class="form-control"  id="search_subid" name="search_subid" placeholder="submition id">
+                    </div>
+                    <div class="col-md-3" >
+                        <input type="text" class="form-control"  id="search_uuid" name="search_uuid" placeholder="UUID">
+                    </div>
+                    <div class="col-md-3" >
+                        <input type="date" class="form-control"  id="search_fdate" name="search_fdate" placeholder="from Date">
+                    </div>
+                    <div class="col-md-3" >
+                        <input type="date" class="form-control"  id="search_tdate" name="search_tdate" placeholder="to Date">
+                    </div>
+                    
+                </div>
+                <div class="row" >
+                    <div class="col-md-3" >
+                        <button class="btn btn-success" type="submit">{% trans 'Search'%} </button>
+                    </div>
+                </div>
+          
+           
+               
+           </form>
+        </div>
+        
+
+    </div>
+</div>
+<hr> 
+<div class="container" > 
+<table class="table table-bordered"  >
+    <thead  class="thead">
+        
+    <tr>
+       
+        <th class="col-xs-1"  >  {% trans "Inernal id" %}     </th>
+        <th class="col-xs-6"  >  {% trans "Customer Name" %}  </th>
+        <th class="col-xs-6"  >  {% trans "Status" %}         </th>
+        <th class="col-xs-1"  >  {% trans "Total Amount" %}   </th>
+        <th class="col-xs-6"  >  {% trans "Sales Total" %}    </th>
+        <th class="col-xs-6"  >  {% trans "Uploded Date " %}  </th>
+  
+    </tr>
+    </thead>
+    <tbody>
+        {% for receiept in receiepts %}
+        <tr> 
+            <td><a href="{{receiept.get_absolute_url }}" > {{receiept.serial_number }} </a></td>
+            <td> {{receiept.buyer_name }}  </td>
+            {% if receiept.is_return %}   <td style="background-color: red;"><span style="color: white;">   Return</span>  </td>    {%else %}<td> {{receiept.docstatus }}   </td> {% endif %}
+            <td> {{receiept.netAmount }}   </td>
+            <td> {{receiept.totalAmount }} </td>
+            <td> {{receiept.created_at }} </td>
+           
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if receiepts.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ receiepts.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ receiepts.number }} of {{ receiepts.paginator.num_pages }}.
+        </span>
+
+        {% if receiepts.has_next %}
+            <a href="?page={{ receiepts.next_page_number }}">next</a>
+            <a href="?page={{ receiepts.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</div>
+<script>
+
+    function upload_file(){
+   
+        var csrftoken = '{{ csrf_token }}';
+        var fileSelect = document.getElementById('recieptfile');
+        var files = fileSelect.files;
+        var formData = new FormData();
+        var file = files[0]
+        formData.append('myfile', file);
+        var url ='{% url "upload_file" %}'
+        var post_url = "{% url 'craete_reciept_api'%}"
+        const UploadSheet= fetch(url , {
+            "method":"POST" ,
+            headers: {
+          
+            "X-CSRFToken": csrftoken,
+            }, 
+          body:formData ,
+           
+        
+
+        }).then(function(response){
+        return response.json()
+    }).then(function (datajson) {
+    
+    var rec = datajson.invoices
+    console.log(rec)
+    document.getElementById("updatearea").innerHTML = ""
+    rec.forEach(element => {
+            var date_to_post = {"data" : element}
+            var update_area =  document.getElementById("updatearea")
+            var newhtml =  `<div class="row">
+                                                                    <div class='col-md-12'> 
+                                                                       <h6> Uploaded  ${element.receiptNumber} </h6>
+                                                                      
+                                                                    </div>
+                                                                </div>`
+            var post_reciept = fetch(post_url , {
+                                                    "method":"POST" ,
+                                                    headers: {
+                                            
+                                                                "X-CSRFToken": csrftoken,
+                                                                }, 
+                                                    body: JSON.stringify(date_to_post)
+                                                  }).then((function(res_2) {
+                                                                              return res_2.json()
+                                  })).then(function(responsData){
+                                      console.log("responsData",responsData.status)              
+                                    if(responsData.status == "1"){
+                                        var htmlresponse = `<div> ${responsData.Succes.number} :${responsData.Succes.status} </div>` 
+                                    document.getElementById("updatearea").innerHTML = htmlresponse
+                                        console.log(responsData)
+                                    }else{
+                                        var htmlresponse = `<div> ${responsData.Error}  </div>` 
+                                    document.getElementById("updatearea").innerHTML = htmlresponse
+                                        console.log(responsData)
+                                    }
+                                    
+                                  }
+
+
+                                                          )
+            
+                 });
+                // location.reload()
+            //document.getElementById("upload_button").style.visibility = "visible";
+    
+    }
+    
+    
+    
+    )
+       
+        // let formData = new FormData();           
+        // formData.append("file", fileupload.files[0]);
+
+    }
+</script>
+{% endblock %}

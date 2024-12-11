@@ -1,0 +1,17 @@
+.box{
+	border: 2px solid #4e73df;
+	padding: 1em;
+	margin: 1em;
+	border-radius: 1em;
+}
+.one { list-style-type: disc; }
+
+.list{
+	margin-left: 1em;
+}
+.car-header{
+	color: black;
+}
+.linkcolor{
+	text-decoration: none;
+}

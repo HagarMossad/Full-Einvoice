@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+<div class="container">
+        <form  method='POST'  action="#" enctype="multipart/form-data"> 
+            {% csrf_token %}
+           
+            <div class="row">
+                <hr> <br>
+            </div>
+            <div class="row"> 
+                <div class="col-md-6">
+                    <input type="file" class="form-control" id="exampleFormControlFile1" required name="myfile">
+                </div> 
+            </div>
+            <div class="row">
+                <hr> <br> 
+            </div>
+            <div class="row"> 
+                <div class="col-md-12"> 
+                    <button type="submit" class="btn btn-primary"  >{% trans 'Upload' %}</button>
+                </div>
+            </div>
+        </form>
+   
+</div>
+
+{% endblock %}

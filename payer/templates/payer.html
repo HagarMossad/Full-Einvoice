@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container">
+    <form method='POST'   {% if profile %} action="{% url 'update_payer' profile.id %}" {% else %} action = "{% url 'create_payer' %}" {% endif %} >
+    
+        {% csrf_token %}
+        <div calss ="row" > 
+            <div class="col-6 col-md-6">   
+        <div class="mb-3">
+          <label for="issuer_name" class="form-label">Profile Name</label>
+          <input type="text" required class="form-control" id="issuer_name"  value ='{{ profile.issuer_name }}' 
+          aria-describedby="namelHelp" name= 'issuer_name'>
+          <div id="namelHelp" class="form-text">You shoud add profile name as server name</div>
+        </div>
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="issuer_type" class="form-label"> User</label>
+                <input type="text" required class="form-control" value ='{{request.user.username }}' 
+                id="user" aria-describedby="appkeyHelp" name= 'user'>
+               
+              </div>
+        </div>
+        <div class="col-6">
+          <div class="mb-3">
+            <label for="issuer_address_governate" class="form-label"> Document Version  </label>
+           <select name="documentTypeVersion" class="form-control">
+             {% if  profile.documentTypeVersion %} 
+             <option value= {{profile.documentTypeVersion}}>{{ profile.documentTypeVersion}} </option>
+             {% else %}
+             <option> </option>
+             {% endif %}
+             {% for ver in versions %}
+             <option value="{{ ver.value}}"> {{ ver.key }} </option>
+             {% endfor %}
+               </select>
+          </div>
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="issuer_type" class="form-label"> Type</label>
+                <input type="text" required class="form-control" value ='{{ profile.issuer_type }}' 
+                id="issuer_type" aria-describedby="appkeyHelp" name= 'issuer_type'>
+               
+              </div>
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="issuer_id" class="form-label">Tax Register Number </label>
+                <input type="text" required class="form-control" value ='{{ profile.issuer_id }}' 
+                id="appsecret" aria-describedby="appsecretHelp" name= 'issuer_id'>
+            
+              </div>
+              
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="issuer_id" class="form-label">Activity Code </label>
+                <input type="text" required class="form-control" value ='{{ profile.activty_number }}'
+                 id="appsecret" aria-describedby="appsecretHelp" name= 'activty_code'>
+            
+              </div>
+              
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="issuer_address_branchId" class="form-label">Branch Id </label>
+                <input type="text" class="form-control" value ='{{ profile.issuer_address_branchId }}'
+                 id="issuer_address_branchId" aria-describedby="pricelistHelp" name= 'issuer_address_branchId'>
+              
+              </div>
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="issuer_address_country" class="form-label">Country </label>
+                <input type="text" class="form-control" value ='{{ profile.issuer_address_country }}' id="issuer_address_country"
+                 aria-describedby="pricelistHelp" name= 'issuer_address_country'>
+              
+              </div>
+              <div class="mb-3">
+                <label for="issuer_address_governate" class="form-label"> Governate </label>
+                <input type="text" class="form-control" value ='{{ profile.issuer_address_governate }}' id="issuer_address_governate"
+                 aria-describedby="pricelistHelp" name= 'issuer_address_governate'>
+              
+              </div>
+              <div class="mb-3">
+                <label for="issuer_address_regionCity" class="form-label"> Region City </label>
+                <input type="text" class="form-control" value ='{{ profile.issuer_address_regionCity }}' id="issuer_address_regionCity"
+                 aria-describedby="pricelistHelp" name= 'issuer_address_regionCity'>
+              
+              </div>
+              <div class="mb-3">
+                <label for="issuer_address_street" class="form-label"> Street </label>
+                <input type="text" class="form-control" value ='{{ profile.issuer_address_street }}' id="issuer_address_street"
+                 aria-describedby="pricelistHelp" name= 'issuer_address_street'>
+              
+              </div>
+              <div class="mb-3">
+                <label for="issuer_address_buildingNumber" class="form-label"> Building Number </label>
+                <input type="text" class="form-control" value ='{{ profile.issuer_address_buildingNumber }}' id="issuer_address_buildingNumber"
+                 aria-describedby="pricelistHelp" name= 'issuer_address_buildingNumber'>
+              
+              </div>
+              <div class="mb-3">
+                <label for="user_key" class="form-label"> User Key </label>
+                <input type="text" class="form-control" value ='{{ profile.user_key }}' id="user_key"
+                 aria-describedby="pricelistHelp" name= 'user_key'>
+                 <div id="namelHelp" class="form-text">You shoud add this for version 0.9 </div>
+              
+              </div>
+              <div class="mb-3">
+                <label for="token_key" class="form-label"> User Privacey  </label>
+                <input type="text" class="form-control" value ='{{ profile.token_key }}' id="token_key"
+                 aria-describedby="pricelistHelp" name= 'token_key'>
+                 <div id="namelHelp" class="form-text">You shoud add this for version 0.9 </div>
+              
+              </div>
+        </div>
+        <button type="submit" class="btn btn-primary" > Save</button>
+    </form>
+</div>
+
+{% endblock %}

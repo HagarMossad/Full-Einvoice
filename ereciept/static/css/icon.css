@@ -1,0 +1,121 @@
+
+.icon {
+    display: inline-block;
+    height: 25px;
+    width: 25px;
+    vertical-align: bottom;
+    background-size: contain !important;
+}
+.start-blue-c {
+    background: url("/static/img/customize.png");
+    
+    background-repeat:no-repeat
+}
+
+.accounting-blue {
+    background:url("/static/img/customize.png");
+}
+
+.buying-blue {
+    background: url("/static/img/buying.png");
+}
+
+.selling-blue {
+    background: url("/static/img/selling.png");
+}
+
+.stock-blue {
+    background: url("/static/img/stock.png");
+}
+
+.assets-blue {
+    background: url("/static/img/assets.png");
+}
+
+.projects-blue {
+    background: url(/assets/dynamicerp/images/projects.png)
+}
+
+.crm-blue {
+    background: url(/assets/dynamicerp/images/crm.png)
+}
+
+.support-blue {
+    background: url(/assets/dynamicerp/images/support.png)
+}
+
+.hr-blue {
+    background: url(/assets/dynamicerp/images/hr.png)
+}
+
+.quality-blue {
+    background: url(/assets/dynamicerp/images/quality.png)
+}
+
+.website-blue {
+    background: url(/assets/dynamicerp/images/website.png)
+}
+
+.social-blue {
+    background: url(/assets/dynamicerp/images/social.png)
+}
+
+.dashboard-blue {
+    background: url(/assets/dynamicerp/images/dashboard.png)
+}
+
+.marketplace-blue {
+    background: url(/assets/dynamicerp/images/marketplace.png)
+}
+
+.tools-blue {
+    background: url(/assets/dynamicerp/images/tools.png)
+}
+
+.settings-blue {
+    background: url(/assets/dynamicerp/images/settings.png)
+}
+
+.users-blue {
+    background: url(/assets/dynamicerp/images/users.png)
+}
+
+.customize-blue {
+    background: url(/assets/dynamicerp/images/customize.png)
+}
+
+.integrate-blue {
+    background: url(/assets/dynamicerp/images/integrate.png)
+}
+
+.developer-blue {
+    background: url(/assets/dynamicerp/images/developer.png)
+}
+
+.learn-blue {
+    background: url(/assets/dynamicerp/images/learn.png)
+}
+
+.manufacture-blue {
+    background: url(/assets/dynamicerp/images/manufacture.png)
+}
+
+.retail-blue {
+    background: url(/assets/dynamicerp/images/retail.png)
+}
+
+.education-blue {
+    background: url(/assets/dynamicerp/images/education.png)
+}
+
+.healthcare-blue {
+    background: url(/assets/dynamicerp/images/healthcare.png)
+}
+
+.agriculture-blue {
+    background: url(/assets/dynamicerp/images/agriculture.png)
+}
+
+.non-profit-blue {
+    background: url(/assets/dynamicerp/images/charity.png)
+}

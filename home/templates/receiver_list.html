@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+
+<div class="container" >
+
+    
+    <div>
+        <div class="clo-md-4">
+            <a href ='{% url "creat_receiver"%}' class ='btn btn-success'> Create New </a>
+        </div>
+        <div class="clo-md-4" align='right'>
+            <a href ='{% url "import_reciever"%}' class ='btn btn-primary'> Import Receiver </a>
+        </div>
+    </div>
+    <br> <hr> 
+    <form>
+        <div class="row">
+    
+            <div class="col-md-3 ">
+                <input  class="form-control" placeholder="Search" name="search"  {% if search %} value="{{ search }}" {% endif %}/>
+            </div>
+            <div class="col-md-3"> <button type="submit" > Search</button></div>
+        </div>
+    </form>
+    <hr> <br>
+    <dvi class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th> Receiver name </th>
+                        <th> Receiver TaxID </th>
+                        <th> - </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for receiver in recievers %}
+                    <tr> 
+                        <td>  <a href ="{% url 'edit_receiver' receiver.id %}" >{{ receiver.receiver_name }}  </a></td>
+                        <td>  {{ receiver.receiver_id }} </td>
+                       {% if request.user.is_superuser %} <td> <a href='{% url "delete_receiver" receiver.id %}'> Delete </a> </td> {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </dvi>
+    <div class="pagination">
+        <span class="step-links">
+            {% if recievers.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ recievers.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ recievers.number }} of {{ recievers.paginator.num_pages }}.
+            </span>
+    
+            {% if recievers.has_next %}
+                <a href="?page={{ recievers.next_page_number }}">next</a>
+                <a href="?page={{ recievers.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,364 @@
+{% extends 'pages/base.html'%} 
+{% load i18n %} 
+{% block content %} 
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dynamic_table.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- JS for searching -->
+    <script src="{% static 'js/select.min.js' %}"></script>
+    
+</head>
+
+<div class="container">
+    {% if not receiept.is_return and receiept.docstatus == '1' %}
+     <div class="row">
+          <div class="col-5">
+        <a href="{% url 'create_invocie_json_return' receiept.id %}" class="btn btn-primary" >  Return</a>
+        
+    </div class="col-5">
+     <div>
+        <a target="blank" href="https://invoicing.eta.gov.eg/receipts/print/{{receiept.t_uid}}/share/2023-03-06T01:11:32Z" class="btn btn-primary" >  Print</a>
+        
+    </div>
+     </div>
+    {% endif %}
+    {% if receiept.docstatus == '0' and  not receiept.t_uid %}
+    <div algin="right">  
+        <form method="post" action="{% url 'create_invocie_json'  receiept.id %}"> 
+            {% csrf_token %}
+            <input type="hidden" name="p_id" id="id1" value="{{receiept.id}}">
+            <button type="submit">  {% trans "Post" %} </button>
+        </form>
+    </div>
+    <hr>
+    {% endif %}
+     {% if receiept.status == "Submit" %}
+     <div class="alert alert-primary" role="alert">
+        SubmitionID :  {{receiept.submitionid }}
+      </div>
+     {% endif %} 
+     {% if receiept.status == "reject" %}
+     <div class="alert alert-danger" role="alert">
+       ERROR {{receiept.submitionid }}
+      </div>
+     {% endif %} 
+    
+    <form method="post" action="{% url 'post_receipt_data' %}" onchange="checkchange()">
+
+       
+        {% csrf_token %}
+        <input type="hidden" name="id" id="id1" value="0">
+        <input type="text" class="form-control" required id="r_id" name="r_id" hidden value="{{ receiept.id }}">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="inputAddress2">{% trans 'DateTime Issued' %}</label>
+                <input type="datetime" class="form-control" name="dateTimeIssued" id="dateTimeIssued" {% if dateTimeIssued %} value="{{dateTimeIssued}}" {% endif%} class="form-control" {% if sales_invoice.doctstatus == '2' %} readonly{% endif %} required>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputAddress2">{% trans 'Statu' %}</label>
+                <input type="data" class="form-control" name="status" id="status" value="{{ receiept.status }}" readonly >
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputAddress2">{% trans 'UUID' %}</label>
+                <input type="list" class="form-control" name="uuid" id="status" value="{{ receiept.t_uid }}" readonly >
+            </div>
+
+        </div>
+        <div class="form-row" readonly>
+            <div class="form-group col-md-4">
+                <label for="buyer_name"> {% trans 'Buyer Name' %}</label>
+                <input type="text" class="form-control" id="buyer_name" name="buyer_name" 
+                {% if receiept.buyer_name %}  value="{{receiept.buyer_name}}"   {% endif %} >
+            </div>
+            <div class="form-group col-md-4">
+                <label for=" buyer_type"> {% trans 'Buyer Type'%}</label>
+                <select class="form-control " name="buyer_type" id="buyer_type" {% if receiept.doctstatus == '2' %} readonly{% endif %}  required>
+                    <option> </option>
+                    <option value="B"
+                    {% if receiept.buyer_type == "B" %} selected {% endif %}>  {% trans 'Business' %}</option>
+                    <option value="P"
+                    {% if receiept.buyer_type == "P" %} selected {% endif %}>  {% trans 'Person' %}</option>
+                    <option value="F"
+                    {% if receiept.buyer_type == "F" %} selected {% endif %}>  {% trans 'Foreigner' %}</option>
+                  
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="buyer_id"> {% trans 'Buyer ID' %}</label>
+                <input type="text" class="form-control" id="buyer_id" name="buyer_id" 
+                {% if receiept.buyer_id %}  value="{{ receiept.buyer_id}}" {% endif%} >
+            </div>
+            <div class="form-group col-md-4">
+                <label for="buyer_mobileNumber"> {% trans 'Buyer Mobil Number' %}</label>
+                <input type="text" class="form-control" id="buyer_mobileNumber" name="buyer_mobileNumber" 
+                {% if receiept.buyer_mobileNumber %}    value="{{ receiept.buyer_mobileNumber}}" {% endif %} >
+            </div>
+            <div class="form-group col-md-4">
+                <label for="buyer_paymentNumber"> {% trans 'Buyer Payment Number' %}</label>
+                <input type="text" class="form-control" id="buyer_paymentNumber" name="buyer_paymentNumber" 
+                    {% if receiept.buyer_paymentNumber %}  value="{{ receiept.buyer_paymentNumber}}" {% endif %} >
+            </div>
+            <div class="form-group col-md-4">
+                <label for="receiptNumberr"> {% trans 'Reciept Number' %}</label>
+                <input type="text" class="form-control" id="receiptNumber" name="receiptNumber" 
+                    {% if receiept.receiptNumber %}  value="{{ receiept.receiptNumber}}" {% endif %} >
+            </div>
+
+        </div>
+        {% if receiept.docstatus != "-1" %}
+        <div class="container-xl">
+            <div class="table-responsive">
+                <div class="table-wrapper">
+                    <div class="table-title">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h2>{% trans 'Reciept ' %} <b>{% trans 'Item' %}</b></h2>
+                            </div>
+                            {% if receiept.docstatus != "1" %}
+                            <div class="col-sm-6">
+                                <a href="#addItemModal" class="btn btn-success" data-toggle="modal">
+                                    <i class="material-icons">&#xE147;</i> <span>Add New</span></a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                
+                                <th style="width:40%">{% trans 'Item' %}</th>
+                                <th>{% trans 'QTY' %}</th>
+                                <th>{% trans 'UOM' %}</th>
+                                <th>{% trans 'Price' %}</th>
+                                <th>{% trans 'Total' %}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-data">
+                                {% for item in receiept.itemData.all %}
+                                <tr>
+                                     <th> {{item.internalCode}} </th>
+                                     <th>  {{ item.quantity }} </th>
+                                     <th> {{item.unitType }}  </th>
+                                     <th>  {{item.unitPrice }}</th>
+                                     <th> {{item.total }} </th>
+                                     {% if receiept.docstatus != "1" %}
+                                     <th> 
+                                       <input type="data" value="{{ item.id}}" hidden id="line_id" name="line_id"/>
+                                       <div class="row"> 
+                                        <div class="col-md-6">
+                                        <a href="javascript:remove_line({{ item.id }} , {{ receiept.id }}  )"  >
+                                            <i class="fa fa-trash" style="font-size:18px;color:rgb(250, 17, 79)"></i>
+                                        </a>
+                                    </div>
+                                    <div class="row"> 
+                                        <a  href="#editItemModal" data-toggle="modal"
+                                         onclick="edit_line('{{item.id}}','{{receiept.id}}')">
+                                        <i class="fa fa-edit" style="font-size:18px;color:rgb(12, 42, 164)"></i>
+                                        </a>
+                                        </div>
+                                    </div>
+                                     </th>
+                                     {% endif %}
+                                </tr>
+                                {% endfor %}
+                        </tbody>
+
+                    </table> 
+
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputCity">{% trans 'Total Sales' %}</label>
+                    <input type="text" class="form-control" id="net_total" name="net_total" value="{{receiept.totalSales}}" readonly>
+
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="inputCity">{% trans 'Total Amount' %}</label>
+                    <input type="text" class="form-control" value="{{receiept.totalAmount}}" id = "total_amount" readonly>
+
+                </div>
+
+            </div>
+        </div>
+        {% endif %}
+        {% if not receiept.t_uid %}
+        <button class="btn btn-primary" type="submit"> Save</button>
+        {% endif %}
+    </form>
+
+
+
+
+
+    <!-- Add edit form modal -->
+
+
+
+
+    
+<!-- End edit form modal -->
+<script> 
+function update_item_table(data){
+    document.getElementById("total_amount").value =  data.total_amount
+            document.getElementById("net_total").value =  data.total_sales
+            document.getElementById("tbody-data").innerHTML =""
+            data.items.forEach(item => {
+                document.getElementById("tbody-data").innerHTML=   document.getElementById("tbody-data").innerHTML + `<tr> 
+                                    <th> ${item.internalCode} </th>
+                                     <th>  ${ item.quantity } </th>
+                                     <th> ${item.unitType }  </th>
+                                     <th>  ${item.unitPrice } </th>
+                                     <th> ${item.total } </th>
+                                     <th> 
+                                       <input type="data" value="${ item.id}" hidden id="line_id" name="line_id"/>
+                                       <div class="row"> 
+                                        <div class="col-md-6">
+                                        <a href="javascript:remove_line(${ item.id } , '{{receiept.id }}')"  >
+                                            <i class="fa fa-trash" style="font-size:18px;color:rgb(250, 17, 79)"></i>
+                                        </a>
+                                    </div>
+                                    <div class="row"> 
+                                        <a  href="#editItemModal" data-toggle="modal"
+                                         onclick="edit_line('${ item.id }','{{ receiept.id }}' )">
+                                        <i class="fa fa-edit" style="font-size:18px;color:rgb(12, 42, 164)"></i>
+                                        </a>
+                                        </div>
+                                        </div>
+                                     </th>
+                    </tr>`
+            });
+}
+function edit_line(item_id ,reciept_id ){
+    var csrftoken = '{{ csrf_token }}';
+    
+    var data =  {
+                "reciept_id" :reciept_id,
+                'i':item_id }
+    
+    document.getElementById("editItemModalData").innerHTML = ""
+    var url = `../reciept_line_details/${item_id}` 
+    var get_details = fetch(url).then(function(response){
+        return response.json()
+    }).then(function (datajson) {
+           console.log(datajson)
+           document.getElementById("editItemModalData").innerHTML = `
+           
+           <div class="form-group">
+            <input type="text" class="form-control" required id="r_id" name="line_id" hidden value="${datajson.id}">
+            <label>{% trans 'Item' %}</label>
+            <select class="js-example-basic-single" name="item_code" id="item_code" onchange="getitemstockuom()" style="width: 100% !important">
+                                    <option></option>
+                                    {% for item in items %}
+                                     <option value='{{item.id}}'>{{item.item_name}}</option>
+                                    {% endfor %}
+            </select>
+           </div>
+           <div class="form-group">
+                            <label>{% trans 'internal Code' %}</label>
+                            <input type="text" class="form-control" required id="internalCode" name="internalCode" value=${datajson.internalCode}>
+            </div>
+            <div class="form-group">
+                            <label>{% trans 'Item Code' %}</label>
+                            <input type="text" class="form-control" required id="itemCode" value=${datajson.itemCode}>
+            </div>
+            <div class="form-group">
+                            <label>{% trans 'Description' %}</label>
+                            <input type="text" class="form-control" required id="description" name="description" value=${datajson.description}>
+            </div>
+
+            <div class="form-group">
+                            <label>{% trans 'itemType' %}</label>
+                            <option id = "${datajson.itemType}" selected >  ${datajson.itemType} </option>
+                            <select  type="text" class="form-control" required id="itemType" name="itemType"> 
+                                <option id = "EGS" >   EGS </option>
+                                <option id = "GS1" >   GS1 </option>
+                            </select>
+                            
+            </div>
+            <div class="form-group">
+                            <label>{% trans 'QTY' %}</label>
+                            <input type="data" class="form-control" value=${datajson.quantity} required id="stock_qty" name="stock_qty" >
+            </div>
+            <div class="form-group">
+                            <label>{% trans 'UOM' %}</label>
+                               <input type="text" class="form-control" name="stock_uom" id="stock_uom"  value=${datajson.unitType } onchange="calcStockQty()">
+    
+                                
+            </div>
+            <div class="form-group">
+                            <label>{% trans 'Price' %}</label>
+                            <input type="data" class="form-control" required id="rate" name="rate"  value=${datajson.unitPrice}>
+            </div>
+
+            <div class="form-group">
+                        <label for="taxtemplate">Item Tax </label>
+                        <select class="form-control" 
+                                id="taxtemplate" name = "taxtemplate" > 
+                            {% if datajson.taxtemplate %}
+                                <option value="${datajson.taxtemplate.id}" selected > ${datajson.taxtemplate.name}</option>
+                           
+                            {% else %}
+                            <option > </option> 
+                                {% endif %}
+                            {% for tax in taxes %}
+                            <option value="{{tax.id}}"> {{ tax.name }}  </option>
+                            {% endfor %}
+                        </select>
+            </div>
+                
+           `
+
+           
+        })
+}
+function remove_line(line , reciept_id){
+      
+    var csrftoken = '{{ csrf_token }}';
+    var data ={"line_id": line  ,
+                "reciept_id" :reciept_id }
+        // var line = document.getElementById("line_id").value
+    console.log(data)
+        var url = '{% url "delete_reciept_line" %}'
+        const RemoveLine = fetch(url , {
+            "method":"POST" ,
+            headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+          }, 
+          body: JSON.stringify(data),
+        }).then(function(response){
+
+            return response.json()
+        }).then(function (data) {
+            update_item_table(data)
+           
+        })
+      
+        
+}
+$(document).ready(function() {
+    var post_date = "{{receiept.dateTimeIssued }}"
+   if (post_date) {
+    $("#dateTimeIssued").val(post_date);
+   }else {
+    var today = new Date().toISOString();
+    $("#dateTimeIssued").val(today);
+   }
+   
+})
+
+function validationform(){
+    console.log("valide")
+}
+
+</script>
+{% endblock %}

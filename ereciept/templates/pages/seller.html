@@ -1,0 +1,135 @@
+{% extends 'pages/base.html'%} 
+{% load i18n %} 
+{% block content %} 
+{% load static %}
+<div class="container">
+    <form method='POST' 
+      {% if profile %} action="{% url 'seller-list'  %}" 
+      {% else %} action = "{% url 'seller-list' %}" {% endif %}  >
+
+
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-6">
+          <div class="mb-3">
+            <label for="companyTradeName" class="form-label">{% trans "Company Trade Name" %}</label>
+            <input type="text" required class="form-control" id="companyTradeName"  value ='{{ profile.companyTradeName }}' 
+            aria-describedby="namelHelp" name= 'companyTradeName'>
+           <!-- <div id="namelHelp" class="form-text">You shoud add profile name as server name</div> -->
+          </div>
+        </div>
+        <!---->
+        <div class="col-6">
+          <div class="mb-3">
+            <label for="issuer_type" class="form-label"> User</label>
+            <input type="text" required class="form-control" value ='{{request.user.username }}' 
+            id="user" aria-describedby="appkeyHelp" name= 'user' readonly>
+           
+        </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="mb-3">
+            <label for="branchCode" class="form-label"> {% trans 'Branch Code' %}  </label>
+            <input type="text" required class="form-control" id="branchCod"  value ='{{ profile.branchCode }}' 
+            aria-describedby="namelHelp" name= 'branchCode'>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="mb-3">
+            <label for="deviceSerialNumber" class="form-label"> {% trans 'Device Serial Number' %} </label>
+            <input type="text" required class="form-control" id="deviceSerialNumbe"  value ='{{ profile.deviceSerialNumber }}' 
+            aria-describedby="namelHelp" name= 'deviceSerialNumber'>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="rin" class="form-label">{% trans "Registration number" %} </label>
+                <input type="text" required class="form-control" value ='{{ profile.rin }}' 
+                id="rin" aria-describedby="appkeyHelp" name= 'rin'>
+               
+              </div>
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="activityCode" class="form-label">{% trans "Activity Code" %} </label>
+                <input type="text" required class="form-control" value ='{{ profile.activityCode }}'
+                 id="activityCode" aria-describedby="appsecretHelp" name= 'activityCode'>
+            
+              </div>
+              
+        </div>
+       
+      </div>
+      
+      <div class="row">
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="country" class="form-label">{% trans "Country" %} </label>
+                <input type="text" class="form-control" value ='{{ profile.country  }}' id="country "
+                 aria-describedby="pricelistHelp" name= 'country'>
+              
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="governate" class="form-label"> {% trans "Governate" %}</label>
+                <input type="text" class="form-control" value ='{{ profile.governate }}' id="issuer_governate"
+                 aria-describedby="pricelistHelp" name= 'governate'>
+              
+              </div>
+            </div>
+             <div class="col-6">
+              <div class="mb-3">
+                <label for="regionCity" class="form-label">  {% trans "Region City" %} </label>
+                <input type="text" class="form-control" value ='{{ profile.regionCity }}' id="regionCityy"
+                 aria-describedby="pricelistHelp" name= 'regionCity'>
+              
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="street" class="form-label">  {% trans "Street" %}   </label>
+                <input type="text" class="form-control" value ='{{ profile.street }}' id="street"
+                 aria-describedby="pricelistHelp" name= 'street'>
+              
+              </div>
+            </div>
+              <div class="col-6">
+              <div class="mb-3">
+                <label for="buildingNumber" class="form-label">{% trans "Building Number"  %}  </label>
+                <input type="text" class="form-control" value ='{{ profile.buildingNumber }}' id="buildingNumber"
+                 aria-describedby="pricelistHelp" name= 'buildingNumber'>
+              
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="user_key" class="form-label"> User Key </label>
+                <input type="text" class="form-control" value ='{{ profile.api_secret }}' id="user_key"
+                 aria-describedby="pricelistHelp" name= 'user_key'>
+                 <div id="namelHelp" class="form-text">   {% trans "You shoud add this from tax Portal" %} </div>
+              
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="token_key" class="form-label"> User Privacey  </label>
+                <input type="text" class="form-control" value ='{{ profile.api_key }}' id="token_key"
+                 aria-describedby="pricelistHelp" name= 'token_key'>
+                 <div id="namelHelp" class="form-text">{% trans "You shoud add this from tax Portal" %} </div>
+              
+              </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" > Save</button>
+    </form>
+
+
+</div>
+
+{% endblock %}

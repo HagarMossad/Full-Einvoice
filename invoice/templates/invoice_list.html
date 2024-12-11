@@ -1,0 +1,245 @@
+ 
+
+{% extends 'base.html'%}
+
+{% block content %}
+
+	
+
+{% load static %}
+
+    
+        
+        
+<style>
+ .text-center{
+     max-width: 95%;
+     margin-left: 2rem;
+ }   
+
+ div{
+    padding: 5px 5px 5px 5px; 
+}
+</style>
+
+
+
+
+<br>
+<div class="text-center">
+    <div class="row">
+        <!-- 
+            <a  class="btn btn-primary" href="{% url 'create_inoice'%}"  id ="createnew">  Create New </a> -->
+        
+    </div>
+  <form>
+    <div class="row">
+
+        <div class="col-md-2 ">
+            <input  class="form-control" placeholder="internal code" name="search" id="search"  {% if serach_value %} value="{{ serach_value}}" {% endif %}/>
+        </div>
+        
+        <div class="col-md-2">
+          
+            <select class="form-control" placeholder="sheet Title " name = "uplaoder_id" id="uplaoder_id">
+                {% if uploader_id %} <option value="{{ uploader_id.id }}" >  {{ uploader_id.status }}</option>{% endif %}
+                <option>  </option> 
+                {% for sheet in fl_select %}
+                <option value="{{ sheet.id }}">  {{ sheet.value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="customer" class="form-control" id="customer" placeholder="Customer" {% if customer %} value={{ customer }} {% endif %}>
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="from_date" class="form-control" id="from_date" {% if from_date %} value={{ from_date }} {% endif %}>
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="to_date" class="form-control" id="to_date" {% if to_date %} value={{ to_date }} {% endif %}>
+        </div>
+        <div class="col-md-1">
+           <button type='submit' class="btn btn-danger"> search </button>
+      </div>
+        
+         
+          
+    </div>
+</form>
+<div class="row" style="text-align: left">
+{#    <div class="col-md-3">#}
+       <button type='submit' class="btn btn-danger ml-3 mr-5" onclick="exporttoexel()"> Export </button>
+{#    </div>#}
+{#        <div class="col-md-3" align='right'>#}
+            <a  href="#myModal" class="btn btn-success "   id='myInput' data-toggle="modal" > Upload Sheet </a>
+            <!-- <a href="#myModal" role="button" class="btn btn-lg btn-primary" data-toggle="modal">Launch Demo Modal</a> -->
+{#        </div>#}
+</div>
+    <br> <hr>
+
+<table class="table table-bordered"  >
+    <thead  class="thead">
+        
+    <tr>
+        <th class="col-xs-1" data-field="state" data-checkbox="true"></th>
+        <th class="col-xs-1"  >Inernal id</th>
+        <th class="col-xs-6"  >Customer Name  </th>
+        <th class="col-xs-1" >Totla Amount </th>
+        <th class="col-xs-6" >Sales Total </th>
+        
+        <th class="col-xs-6"  >Uploded Date  </th>
+    </tr>
+    </thead>
+    <tbody>
+   
+   {% for invoice in invoices %}
+        <tr>
+            <td> <input type="checkbox" aria-label="Checkbox for following text input"></td>
+            <td><a href="{% url 'edit_invocie' invoice.id %}">  {{ invoice.internalId }} </a> </td>
+               <td> {{ invoice.receiver_name }}</td>
+            <td> {{ invoice.totalAmount }} </td>
+            <td> {{ invoice.totalSalesAmount }}</td>
+         
+            <td> {{ invoice.created_date }}</td>
+        </tr>
+
+   {% endfor %}
+    </tbody>    
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if invoices.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ invoices.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ invoices.number }} of {{ invoices.paginator.num_pages }}.
+        </span>
+
+        {% if invoices.has_next %}
+            <a href="?page={{ invoices.next_page_number }}">next</a>
+            <a href="?page={{ invoices.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</div>
+
+<script>
+
+
+
+
+function queryParams() {
+    return {
+        type: 'owner',
+        sort: 'updated',
+        direction: 'desc',
+        per_page: 100,
+        page: 1
+    };
+}
+function rowColors(row, index) {
+    var classes = ['active', 'success', 'info', 'warning', 'danger'];
+    
+    if (index % 2 === 0 && index / 2 < classes.length) {
+        return {
+            classes: classes[index / 2]
+        };
+    }
+    return {};
+}
+</script>
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+
+ <script type="text/javascript">
+        $("#modalupload").submit(function(event){
+            event.preventDefault()
+            console.log("upload !")
+            var ft = new FormData();
+            var file = $('#exampleFormControlFile1')[0].files
+            ft.append('myfile', file[0]);
+            $.ajax({
+            type :"POST" ,
+            url :'#' ,
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            enctype: 'multipart/form-data',
+            data:ft,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+        
+            
+
+            success:function(data){
+                window.location.href = "#"
+                console.log('Success')
+                }
+
+    } ) 
+
+
+
+})
+        function Upload(){
+            document.getElementByI('createupload').addEventListener("submit", function(event){
+                                    event.preventDefault()
+            });
+            
+            console.log("upload !")
+        };
+        $(document).ready(function(){
+            let socket = new WebSocket("ws://127.0.0.1:8765");
+            // socket.onopen = function(e) {
+            // socket.send("My name is John");
+            // }
+        //     socket.onmessage = function(event) {
+        //     alert(`[message] Data received from server: ${event.data}`);
+        // };
+        socket.addEventListener('open', function (event) {
+            socket.send('Hello Server!');
+        }           );
+        socket.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data); })
+     });
+        function exporttoexel(){
+            //console.log("hhelo")
+            let from_date = document.getElementById("from_date").value
+            let to_date = document.getElementById("to_date").value
+            let search = document.getElementById("search").value
+            let uplaoder_id = document.getElementById("uplaoder_id")
+            let customer = document.getElementById("customer").value
+            uplaoder_id = uplaoder_id.options[uplaoder_id.selectedIndex].text
+            var request = $.ajax({
+              url: "{% url 'export_to_excel' %}",
+              method: "POST",
+              headers: {'X-CSRFToken': '{{ csrf_token }}'},
+              data: {
+                  "from_date":from_date,
+                  "to_date":to_date,
+                  "search":search,
+                  "uplaoder_id" :uplaoder_id, //uplaoder_id,
+                  "customer":customer
+              }
+            });
+
+            request.done(function( msg ) {
+                var a = $("<a />");
+                a.attr("href", msg.url);
+                $("body").append(a);
+                a[0].click();
+                $("body").remove(a);
+            });
+
+            request.fail(function( jqXHR, textStatus ) {
+              alert( "Request failed: " + textStatus );
+            });
+        }
+     </script>
+
+
+{% endblock %}
+
+

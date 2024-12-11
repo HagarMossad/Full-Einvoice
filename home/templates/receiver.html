@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container">
+    <form method='POST' {% if receiver %} action="{% url 'edit_receiver' receiver.id  %}" {% else %}
+    action="{% url 'creat_receiver'%}" {% endif %} >
+    
+        {% csrf_token %}
+        <div calss ="row" > 
+            <div class="col-6 col-md-6">   
+        <div class="mb-3">
+          <label for="receiver_name" class="form-label">  Name</label>
+          <input type="text" required class="form-control" id="receiver_name"  value ='{{ receiver.receiver_name }}' aria-describedby="namelHelp" name= 'receiver_name'>
+          <div id="namelHelp" class="form-text">You shoud add profile name as server name</div>
+        </div>
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="issuer_type" class="form-label"> Type</label>
+                <!-- <input type="text" required class="form-control" value ='{{ profile.issuer_type }}' id="issuer_type" aria-describedby="appkeyHelp" name= 'issuer_type'> -->
+               <select class="form-control" name = "receiver_type"> 
+
+                {% if receiver %} 
+                <option > {{ receiver.receiver_type }} </option>
+                {% endif %}
+                 {% for t in types %}
+                 <option vale={{t.v}}> {{t.n}} </option>
+                 {% endfor %}
+               </select>
+              </div>
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="receiver_id" class="form-label">Tax Register Number  / Or Personal Id </label>
+                <input type="text" required class="form-control" value ='{{ receiver.receiver_id }}'
+                 id="receiver_ID" aria-describedby="appsecretHelp" name= 'receiver_id'>
+            
+              </div>
+              
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="issuer_address_branchId" class="form-label">Branch Id </label>
+                <input type="text" class="form-control" value ='{{ receiver.receiver_address_branchId }}'
+                 id="receiver_address_branchId" aria-describedby="pricelistHelp" name= 'receiver_address_branchId'>
+              
+              </div>
+        </div>
+        <div class='col-6' >
+            <div class="mb-3">
+                <label for="receiver_address_country" class="form-label">Country </label>
+                <input type="text" class="form-control" value ='{{ receiver.receiver_address_country }}' id="receiver_address_country"
+                 aria-describedby="pricelistHelp" name= 'receiver_address_country'>
+              
+              </div>
+              <div class="mb-3">
+                <label for="receiver_address_governate" class="form-label"> Governate </label>
+                <input type="text" class="form-control" value ='{{ receiver.receiver_address_governate }}' id="receiver_address_governate"
+                 aria-describedby="pricelistHelp" name= 'receiver_address_governate'>
+              
+              </div>
+              <div class="mb-3">
+                <label for="receiver_address_regionCity" class="form-label"> Region City </label>
+                <input type="text" class="form-control" value ='{{ receiver.receiver_address_regionCity }}' id="receiver_address_regionCity"
+                 aria-describedby="pricelistHelp" name= 'receiver_address_regionCity'>
+              
+              </div>
+              <div class="mb-3">
+                <label for="receiver_address_street" class="form-label"> Street </label>
+                <input type="text" class="form-control" value ='{{ receiver.receiver_address_street }}' id="receiver_address_street"
+                 aria-describedby="pricelistHelp" name= 'receiver_address_street'>
+              
+              </div>
+              <div class="mb-3">
+                <label for="issuer_address_buildingNumber" class="form-label"> Building Number </label>
+                <input type="text" class="form-control" value ='{{ receiver.receiver_address_buildingNumber }}' id="receiver_address_buildingNumber"
+                 aria-describedby="pricelistHelp" name= 'receiver_address_buildingNumber'>
+              
+              </div>
+              
+             
+        </div>
+        {% if request.user.is_superuser %}
+        <button type="submit" class="btn btn-primary" > Save</button>
+        {% endif %}
+    </form>
+</div>
+
+{% endblock %}

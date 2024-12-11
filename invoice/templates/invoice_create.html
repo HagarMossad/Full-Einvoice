@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+.text-center{
+     max-width: 95%;
+     margin-left: 2rem;
+ }   
+
+ div{
+    padding: 5px 5px 5px 5px; 
+}
+
+</style>
+<dvi class="container">
+  {% if invoice %}
+  <!-- <div class="row">
+    <div class="col-md-12" style="background-color: blue;">
+     <h3>  Status  </h3>{{  stat }}
+    </div>
+  </div> -->
+  <!-- <a href ='{% url  "post_to_auth" invoice.id %}' class="btn btn-success" > Post to Tax Auth  </a> -->
+  {% endif %}
+</dvi>
+<div class="text-center">
+
+
+
+  <div class="collapse" id="status">
+    <div class="card card-body"> 
+      {% if stat %}
+      <p> 
+        {{ stat }}
+      </p>
+      {% endif %}
+    </div>
+    </div>
+<p>
+    <a class="btn btn-primary" data-toggle="collapse" href="#Issuer" role="button" aria-expanded="false" aria-controls="collapseExample">
+      Main Data
+    </a>
+    {% if invoice %}
+    <a class="btn btn-primary" data-toggle="collapse" href="#Receiver" role="button" aria-expanded="false" aria-controls="collapseExample">
+       Receiver Data
+      </a>
+      <a class="btn btn-success" data-toggle="collapse" href="#status" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Invocie Status
+       </a>
+        <a class="btn btn-danger" data-toggle="collapse" href="#items" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Items
+       </a>
+      {% endif %}
+    <!-- <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="True" aria-controls="collapseExample">
+      Main Section 
+    </button> -->
+  </p>
+  
+</div>
+
+<div class="container">
+    <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+        
+        </div>
+    </div>
+
+    <div class="" id="Issuer">
+        <div class="card card-body">
+          <form method='post' >
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                  <label> Issuer Account </label>
+                  <select name ='issuer' class="form-control"  required > 
+                     
+                      {% for receiver in issuers %}
+                      <option value="{{ receiver.id}}"> {{ receiver.name }}</option>
+                      {% endfor %}
+                  </select>
+
+                </div>
+                <div class='col-md-6'>
+                    <label> Recciver Account </label>
+                 
+                  <select name ='receiver' class="form-control"> 
+                      
+                      {% if invoice %} <option selcted value="{{ invoice.receiver_account.id}}"> {{invoice.receiver_account.receiver_name}}</option>
+                      {% else %} <option> </option> {% endif %}
+                      {% for receiver in receivers%}
+                      <option value="{{ receiver.id}}"> {{ receiver.name }}</option>
+                      {% endfor %}
+                  </select>
+                </div>
+            </div>
+            <div class="row"> 
+                <div class="col-md-6">
+                    <input type="text" class="form-control" name="party"  value="{{ invoice.datetimestr }}">
+                </div>
+                <div class="col-md-6">
+                    <input type="time" id="appt" class="form-control" name="appt" >
+                </div>
+            </div>
+            
+            
+                <div class="row">
+                    <div class='col-md-4'>
+                        <label> Version </label>
+                      <select  name ='documentTypeVersion' class="form-control"> 
+                        {% if invoice %} <option selcted value="{{ invoice.documentTypeVersion}}"> {{invoice.documentTypeVersion}} </option> {% endif %}
+                          <option value="1.0" > V 1.0</option>
+                          <option value="0.9" > V 0.9</option>
+                      </select>
+                    </div>
+                    <div class='col-md-4'>
+                        <label>   documentType  </label>
+                     
+                      <select class="form-control" name ="documentType" >    
+                        {% if invoice %} <option selcted value="{{ invoice.documentType}}"> {{invoice.documentType}} </option> {% endif %}
+                          <option value="i"> Invocie </option>
+                          <option value="d"> Debite  Note </option>
+                          <option value="c"> Credit  Note </option>
+                      </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label> totalSalesAmount </label>
+                        <input type="text" name="totalSalesAmount" required class="form-control"
+                         {% if invoice  %} value="{{ invoice.totalSalesAmount }}" {% endif %}>
+                    </div>
+                    </div>
+                    <div class="row">
+                      <div class='col-md-4'>
+                          <label>totalDiscountAmount </label>
+                          <input type="text" name="totalDiscountAmoun" required class="form-control"
+                          {% if invoice  %} value="{{ invoice.totalDiscountAmoun }}" {% endif %}>
+                        
+                      </div>
+                      <div class='col-md-4'>
+                          <label>   netAmount </label>
+                          <input type="text" name="totalDiscountAmoun" required class="form-control"
+                          {% if invoice  %} value="{{ invoice.netAmount }}" {% endif %}>
+                       
+                       
+                      </div>
+  
+                      <div class="col-md-4">
+                          <label> internalId </label>
+                          <input type="text" name="internalId" required class="form-control"
+                           {% if invoice  %} value="{{ invoice.internalId }}" {% endif %}>
+                      </div>
+                      </div>
+          <div class="row">
+              <div class="col-12">
+                  <h5>Taxes</h5>
+              </div>
+          </div>
+          <div class="row">
+
+              {% for t in taxes %}
+                   <div class="col-md-4">
+                          <label> {{ t.tax_link.Desc_ar }} </label>
+                          <input type="text"  required class="form-control" value="{{ t.amount }}">
+                      </div>
+              {% endfor %}
+          </div>
+                  
+
+          </form>
+        </div>
+    </div>
+   
+    <div class="collapse" id="Receiver">
+        <div class="card card-body">
+          <form>
+           
+              <div class="row">
+                 
+                 
+                  <div class='col-md-6'>
+                    <label>   Name </label>
+                    <input type="text" name ='receiver_name' class="form-control" {% if invoice %}
+                    value="{{ invoice.receiver_name }}" {% endif %}>
+                  
+                </div>
+                  
+              </div>
+              <div class="row">
+                <div class='col-md-6'>
+                    <label> ID </label>
+                  <input type="text" name ='receiver_id' class="form-control" {% if invoice %}
+                  value="{{ invoice.receiver_id }}" {% endif %}>
+                </div>
+                <div class='col-md-6'>
+                    <label>   Type </label>
+                 
+                  <select class="form-control" name ="receiver_type" >    
+                     
+                      {% if invoice %}
+                      <option value="{{ invoice.receiver_type }}"> {{ invoice.receiver_type }} </option>
+                      {% endif %}
+                      {% for t in types %}
+                      <option value="{{ t.v }}" > {{t.n}}</option>
+                      {% endfor %}
+                  </select>
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class='col-md-6'>
+                    <label> BranchId </label>
+                  <input type="text" name ='receiver_address_branchId' class="form-control"{% if invoice %}
+                  value="{{ invoice.receiver_address_branchId }}" {% endif %}>
+                </div>
+                <div class='col-md-6'>
+                    <label>   Country </label>
+                  <input type="text" name ='receiver_address_country' class="form-control"   
+                  {% if invoice %}value="{{ invoice.receiver_address_country }}" {% endif %}>
+                </div>
+            </div>
+            <div class="row">
+                <div class='col-md-6'>
+                    <label> Governate </label>
+                  <input type="text" name ='receiver_address_governate' class="form-control"
+                  {% if invoice %}value="{{ invoice.receiver_address_governate }}" {% endif %}>
+                </div>
+                <div class='col-md-6'>
+                    <label>   City </label>
+                  <input type="text" name ='receiver_address_regionCity' class="form-control"
+                  {% if invoice %}value="{{ invoice.receiver_address_regionCity }}" {% endif %}>
+                </div>
+            </div>
+            <div class="row">
+                <div class='col-md-6'>
+                    <label> Street </label>
+                  <input type="text" name ='receiver_address_street' class="form-control"
+                  {% if invoice %}value="{{ invoice.receiver_address_street }}" {% endif %}>
+                </div>
+                <div class='col-md-6'>
+                    <label>  buildingNumber </label>
+                  <input type="text" name ='receiver_address_buildingNumber' class="form-control"
+                  {% if invoice %}value="{{ invoice.receiver_address_buildingNumber }}" {% endif %}>
+                </div>
+            </div>
+            
+          </form>
+        </div>
+    </div>
+    <div class="collapse" id="items">
+        <table class="table table-bordered"  >
+    <thead  class="thead">
+
+    <tr>
+        <th class="col-xs-1"  >Item Name</th>
+        <th class="col-xs-6"  >QTY  </th>
+        <th class="col-xs-1" >Price </th>
+         <th class="col-xs-1" >Tax</th>
+        <th class="col-xs-6" >Total </th>
+
+    </tr>
+    </thead>
+    <tbody>
+
+   {% for item in items %}
+        <tr>
+            <td>{{ item.description }}</td>
+               <td> {{ item.quantity }}</td>
+            <td> {{ item.unitValue_amountEGP }} </td>
+            <td> {{ item.total_taxes_fees }} </td>
+            <td> {{ item.total }}</td>
+
+        </tr>
+
+   {% endfor %}
+    </tbody>
+</table>
+    </div>
+</div>
+{% endblock %}

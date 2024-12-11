@@ -1,0 +1,47 @@
+.plus {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(#1f272f, #71768f), linear-gradient(#1f272f, #71768f), #ffffff;
+    background-position: center;
+    background-size: 50% 5px, 5px 50%;
+    /*thickness = 2px, length = 50% (25px)*/
+    background-repeat: no-repeat;
+    margin: auto;
+}
+
+.boldoption {
+    font-weight: bold;
+    background-color: rgb(223, 7, 7);
+}
+
+.search {
+    position: relative;
+    box-shadow: 0 0 40px rgba(51, 51, 51, .1)
+}
+
+.search input {
+    height: 60px;
+    text-indent: 25px;
+    border: 2px solid #d6d4d4
+}
+
+.search input:focus {
+    box-shadow: none;
+    border: 2px solid #83C9EB
+}
+
+.search .fa-search {
+    position: absolute;
+    top: 20px;
+    left: 16px
+}
+
+.search button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    height: 50px;
+    width: 110px;
+    background: blue
+}

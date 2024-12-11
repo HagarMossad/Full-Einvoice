@@ -1,0 +1,96 @@
+Data Structure
+The data structure of the receipt v1.2
+
+1- header -- object 
+    1-1 dateTimeIssued Mandatory, DateTime in UTC, example 2022-02-03T00:00:00Z
+    1-2 receiptNumber String (50)
+    1-3 uuid
+    1-4 previousUUID
+    1-5 referenceOldUUID
+    1-6 currency
+    1-7 exchangeRate
+    1-8 sOrderNameCode
+    1-9 orderdeliveryMode --select [FC 	From the company place , TO 	Transport by others ,
+    TC 	Transported by the company ]
+    1-10 grossWeight
+    1-11 netWeight
+2- documentType --object 
+    2-1 receiptType Mandatory, the Value must be ‘s’ for Sale Receipt
+    2-2 typeVersion  	Mandatory, the Value must be ‘1.2’
+3 - seller --object 
+    3-1  rin Mandatory, Registration number. For business in Egypt must be registration number.
+    3-2  companyTradeName Mandatory, Registration name of the company.
+    3-3  branchCode 
+    3-4 branchAddress --object 
+        3-4-1 country
+        3-4-2 governate
+        3-4-3 regionCity
+        3-4-4 street
+        3-4-5 buildingNumber
+        3-4-6 postalCode
+        3-4-7 floor
+        3-4-8 room
+        3-4-9 landmark
+        3-4-10 additionalInformation
+    3-5 deviceSerialNumber
+    3-6 syndicateLicenseNumber
+    3-7 activityCode
+4- buyer 
+    4-1 type B or P or F
+    4-2 id
+    4-3 name
+    4-4 mobileNumber
+    4-5 paymentNumber
+5- itemData --done path models.itemData.itemData
+    5-1 internalCode
+    5-2 description
+    5-3 itemType
+    5-4 itemCode 
+    5-5 unitType 
+    5-6 quantity 
+    5-7 unitPrice
+    5-8 netSale
+    5-9 totalSale
+    5-10 total
+    5-11 commercialDiscountData Optional, This would be collection of objects of commercial discounts applied to this item.
+    --list of objects --done models.discountmodel.DiscountObj
+        5-11-1 amount
+        5-11-2 description
+    5-12 itemDiscountData Optional, This would be collection of objects of non-taxable items discounts.
+    -- list of objects  --done models.discountmodel.DiscountObj
+        5-12-1 amount
+        5-12-2 description
+    5-13 valueDifference
+    5-14 taxableItems list of objects  --done models.taxableItems.taxableItems
+        5-14-1 taxType 
+        5-14-2 amount
+        5-14-3 subType
+        5-14-4 rate
+6- totalSales Mandatory, sum of all sales total elements of receipt lines
+7- totalCommercialDiscount Optional, sum of all discount amount elements of receipts lines
+8- totalItemsDiscount Optional, sum of all itemsDiscountAmount elements of receipt lines
+9- extraReceiptDiscountData --list of objects   --done models.discountmodel.DiscountObj
+    9-1 amount
+    9-2 description
+10- netAmount Mandatory, Sum of all receipt lines netTotal
+11- feesAmount Optional, Is the additional fees amount that will be added to the total of the receipt. This field accepts only zero values.
+12 - totalAmount  Mandatory, totalAmount = sum of all receipt line total – total extraDiscountAmount
+13 - taxTotals --list of objects 
+    13 -1 taxType 
+    13 -2 amount
+14 -paymentMethod String not object select [
+    C 	Cash
+    V 	Visa
+    CC 	Cash with contractor
+    VC 	Visa with contractor
+    VO 	Vouchers
+    PR 	Promotion
+    GC 	Gift Card
+    P 	Points
+    O 	Others
+]
+
+15 -adjustment Optional, monetary amount that will be added to the total of the receipt to perform final adjustments to the total amount of the receipt. This field accepts only zero values. 
+16 -contractor  not done 
+17 -beneficiary not done 
+

@@ -1,0 +1,345 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title> Dynamic </title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  
+
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+
+    <link href="{% static 'css/select.min.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'js/icon.css'%}">
+   
+
+</head>
+
+<body id="page-top">
+    <div id="uploadFile" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'add_receiept_item' %}"  enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{% trans 'Uploud Reciept File' %}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>{% trans 'File' %}</label>
+                            <input type="file" class="form-control" required id="recieptfile">
+                        </div>
+                        <div class="form-group">
+                            <a  href="javascript: upload_file()"  class="btn btn-primary" onclick="disablebutton()" id="upload_button" >  Upload  </a>
+                        </div>
+                        <div id ="updatearea"> </div>
+                            
+                        <div class="modal-footer">
+                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                           
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <div id="addItemModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'add_receiept_item' %}" onsubmit="return validationform()" name="form1" onchange="validationform()">
+                    {% csrf_token %}
+                    <input type="datetime-local"   name="date_time_issued" style="display: none;" > 
+                    <input type="date"   name="inv_due_date" style="display: none;">
+                    <input type="hidden" name="reciver">
+                    <input type="hidden" name="discount" style="display: none;">
+                    <input type="hidden" name="main_warehouse">
+                    <input type="hidden" id="id2" name="id2" value="{{receiept.id}}">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{% trans 'Add Item' %}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" class="form-control" required id="r_id" name="r_id" hidden value="{{ receiept.id }}">
+                            <label>{% trans 'Item' %}</label>
+                            <select class="js-example-basic-single" name="item_code" id="item_code" onchange="getitemstockuom()" style="width: 100% !important">
+                                    <option></option>
+                                    {% for item in items %}
+                                     <option value='{{item.id}}'>{{item.item_name}}</option>
+                                    {% endfor %}
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans 'internal Code' %}</label>
+                            <input type="text" class="form-control" required id="internalCode" name="internalCode">
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans 'Item Code' %}</label>
+                            <input type="text" class="form-control" required id="itemCode" name="itemCode">
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans 'Description' %}</label>
+                            <input type="text" class="form-control" required id="description" name="description">
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans 'itemType' %}</label>
+                            <select  type="text" class="form-control" required id="itemType" name="itemType"> 
+                                <option id = "EGS" >   EGS </option>
+                                <option id = "GS1" >   GS1 </option>
+                            </select>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans 'QTY' %}</label>
+                            <input type="data" class="form-control" required id="stock_qty" name="stock_qty" >
+                        </div>
+                       
+                        <div class="form-group">
+                            <label>{% trans 'UOM' %}</label>
+                               <input list="units" class="form-control" name="stock_uom" id="stock_uom"  >
+                               <datalist id="units">
+                                {% for unit in units %}
+                                <option value="{{ unit.id }}"> {{ unit.name }}</option>
+                                {% endfor %}
+                              
+                               
+                              </datalist>
+                                
+                        </div>
+                         
+                        <div class="form-group">
+                            <label>{% trans 'Price' %}</label>
+                            <input type="data" class="form-control" required id="rate" name="rate">
+                        </div>
+                       
+                     
+                       <div class="form-group">
+                        <label for="taxtemplate">Item Tax </label>
+                        <select class="form-control" 
+                                id="taxtemplate" name = "taxtemplate" > 
+                            <option></option>
+                            {% for tax in taxes %}
+                            <option value="{{tax.id}}"> {{ tax.name }}  </option>
+                            {% endfor %}
+                        </select>
+                       </div>
+                    </div>
+                   
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit"  class="btn btn-success" value="Add">
+                    </div>
+                   
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Edit Modal HTML -->
+    <div id="editItemModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'edit_receiept_item' %}" onsubmit="return validationform()" name="form1" onchange="validationform()">
+                    {% csrf_token %}
+                    <input type="datetime-local"   name="date_time_issued" style="display: none;" > 
+                    <input type="date"   name="inv_due_date" style="display: none;">
+                    <input type="hidden" name="reciver">
+                    <input type="hidden" name="discount" style="display: none;">
+                    <input type="hidden" name="main_warehouse">
+                    <input type="hidden" id="id2" name="r_id" value="{{receiept.id}}">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{% trans 'Add Item' %}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body" id="editItemModalData">
+                        <div class="form-group">
+                            <input type="text" class="form-control" required id="r_id" name="r_id" hidden value="{{ receiept.id }}">
+                            <label>{% trans 'Item' %}</label>
+                            <select class="js-example-basic-single" name="item_code" id="item_code" onchange="getitemstockuom()" style="width: 100% !important">
+                                    <option></option>
+                                    {% for item in items %}
+                                     <option value='{{item.id}}'>{{item.item_name}}</option>
+                                    {% endfor %}
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans 'internal Code' %}</label>
+                            <input type="text" class="form-control" required id="internalCode" name="internalCode">
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans 'Item Code' %}</label>
+                            <input type="text" class="form-control" required id="itemCode" name="itemCode">
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans 'Description' %}</label>
+                            <input type="text" class="form-control" required id="description" name="description">
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans 'itemType' %}</label>
+                            <select  type="text" class="form-control" required id="itemType" name="itemType"> 
+                                <option id = "EGS" >   EGS </option>
+                                <option id = "GS1" >   GS1 </option>
+                            </select>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans 'QTY' %}</label>
+                            <input type="number" class="form-control" required id="stock_qty" name="stock_qty" >
+                        </div>
+                       
+                        <div class="form-group">
+                            <label>{% trans 'UOM' %}</label>
+                               <input type="text" class="form-control" name="stock_uom" id="stockuom"  >
+    
+                                
+                        </div>
+                         
+                        <div class="form-group">
+                            <label>{% trans 'Price' %}</label>
+                            <input type="number" class="form-control" required id="rate" name="rate">
+                        </div>
+                       
+                     
+                       <div class="form-group">
+                        <label for="taxtemplate">Item Tax </label>
+                        <select class="form-control" 
+                                id="taxtemplate" name = "taxtemplate" > 
+                            <option></option>
+                            {% for tax in taxes %}
+                            <option value="{{tax.id}}"> {{ tax.name }}  </option>
+                            {% endfor %}
+                        </select>
+                       </div>
+                    </div>
+                   
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit"  class="btn btn-success" value="Add">
+                    </div>
+                   
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="modal fade productsQuickView" id="productsQuickView" tabindex="-1" aria-hidden="true"  onload="myFunction()">
+        <div class="modal-dialog modal-dialog-centered" >
+            <div class="modal-content">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'home' %}">
+                <div class="sidebar-brand-icon rotate-n-15" style="background-color: aqua;">
+                    <!-- <i class="fas fa-laugh-wink"></i> -->
+                    
+                </div>
+                <div class="sidebar-brand-text mx-3"> Dynamic <sup>DTS </sup></div>
+               
+            </a>
+
+            <hr class="sidebar-divider my-0">
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                {% trans "Main" %}
+            </div>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'invoice_list' %}">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span> {% trans 'Inoivce List'  %} </span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'home-list' %}">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span> {% trans 'RECEIEPT List'  %} </span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'reciept_tax' %}">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span> {% trans 'RECEIEPT Taxes'  %} </span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'e_tax_type_list' %}">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span> {% trans 'Taxes Types'  %} </span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'e_tax_sub_type_list' %}">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span> {% trans 'Taxes Sub Types'  %} </span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'seller-list' %}">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span> {% trans 'Seller'  %} </span></a>
+            </li>
+    
+            
+        </ul>
+         <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+              <!-- Topbar -->
+              <nav class="navbar navbar-expand topbar mb-4 static-top shadow"  style="background-color: rgb(46, 4, 199);">
+                <ul class="navbar-nav ml-auto">
+                </ul>
+               </nav>  
+               {% block content %} {% endblock %}  
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <script src="{% static 'vendor/jquery/jquery.js' %}"></script>
+
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+    <!-- Page level plugins -->
+    <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+
+    <!-- Page level custom scripts -->
+    
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
+    
+    <script src="{% static 'js/select2.min.js' %}"></script>
+    <script type="text/javascript">
+        function disablebutton(){
+            document.getElementById("upload_button").style.visibility = "hidden";
+            console.log("hello")
+        }
+    </script>
+</body>
+
+</html>

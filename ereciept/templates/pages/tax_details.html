@@ -1,0 +1,168 @@
+{% extends 'pages/base.html'%} 
+{% load i18n %} 
+{% load static %}
+{% block content %}
+<style > 
+.form{
+    background-color:rgb(167, 218, 248);
+    margin-top: 2rem;
+    padding: 15px 15px 15px 15px;
+}
+div{
+    padding: 5px 5px 5px 5px; 
+}
+h7{
+    color: blue;
+}
+h3{
+    color: brown;
+}
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6" >
+
+            <!-- <h1>  <strong style="color: red;">{{ tax.name }}  </strong> </h1> -->
+            <label > Tax Category </label>
+            <input type='text' , class="form-control" value="{{ tax.name }}" readonly ></input>
+       </div>
+       <div class="col-md-6" >
+
+        
+        <label > Status </label>
+        <input type='text' , class="form-control" value="{{ tax.status }}" readonly ></input>
+   </div>
+    </div>
+   
+    <div class="row">
+        <div class="col-md-4">
+           
+            {% if tax.status == 'Active' %} 
+            <a href ='#' class="btn btn-primary">  Deactivate </a> {% else %} 
+            <a href ='#' class="btn btn-success">  Activate </a> {% endif %}
+        </div>
+    </div>
+    <div class="row" >
+        <div class="col-md-12">
+            <table class='table'>
+                <thead class="dark">
+                    <tr>
+                        <th> Tax Type </th>
+                        <th> Tax Amount </th>
+                        <th> Tax Rate  </th>
+                        <th> Tax Suptype </th>
+
+                    </tr>
+
+                </thead>
+                <tbody>
+                    {% for ty in tax.taxes.all %}
+                    <tr>
+                        <td> {{ ty.taxType }} </td>
+                        <td> {{ ty.amount }} </td>
+                        <td> {{ ty.rate }} </td>
+                        <td> {{ ty.subType }} </td>
+                        <td> <a href ='{% url "delete_taxable_item"  ty.id %}' > <i class="fa fa-trash"> </i></a></td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+
+        </div>
+
+    
+    </div>
+
+    
+    <hr> 
+    <form  class="form" method="POST"  action="{% url 'reciept_tax_details' tax.id  %}">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <h7> Add Tax deatails </h7>
+            </div>
+        </div>
+    <div class="row">
+
+        <div class="col-md-6"> 
+            <label > Tax Type </label>
+            <select name ='taxType'  id='taxType' class="form-control" required onchange="TypeSelect()" >
+                <option> </option>
+                {% for te  in taxe_codes %}
+                <option value='{{ te.Code }}'> {{ te.Desc_ar }}</option>
+                {% endfor %}
+            </select>
+
+        
+        </div>
+        <div class="col-md-6">
+            <label>  Amount </label>
+            <input type ="number" name='amount' class="form-control"  >
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-md-6"> 
+            <label > Sub Type </label>
+            <select name ='suptype' id ='suptype' class="form-control" required >
+                <option> </option>
+                {% for t  in taxe_types %}
+                <option value='{{ t.Code }}'> {{ t.Desc_ar }}</option>
+                {% endfor %}
+            </select>
+
+        
+        </div>
+        <div class="col-md-6">
+            <label>  Rate </label>
+            <input  name='rate' class="form-control"  >
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <button type ="submit" class="btn btn-success"> Add Tax  </button>
+        </div>
+    </div>
+</form>
+</div>
+
+<script type="text/javascript">
+
+function TypeSelect()
+    {
+        var val = document.getElementById('taxType')
+        var subtype = document.getElementById('suptype')
+        var data = {"taxType":val.value}
+        var xmlHttp = new XMLHttpRequest();
+        var Url = "{% url 'get_available_subtype' %}"
+        var i = 0 
+        $.ajax
+            ({
+            type: "GET",
+            url: "{% url 'get_available_subtype' %}",
+            data: data,
+            success: function(r)
+            {
+
+                subtype.innerHTML =''
+                for ( i =0 ; i < r.data.length; i++){
+                    console.log(r.data[i])
+                    var option = document.createElement( 'option' );
+                    option.value = r.data[i].Code
+                    option.text = r.data[i].Desc_en
+                    subtype.add( option );
+                }
+             
+
+            }
+            });
+        
+    }
+    </script>
+{% endblock %}
+
+

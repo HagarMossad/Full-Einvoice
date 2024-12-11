@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" >
+
+    <div class="row"> 
+        <div class="col-md-3">
+            <a href="{% url 'creat-user' %}" class="btn btn-success"> Create New </a>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead> 
+                    <tr> 
+                        <th>User name  </th>
+                        <th> User Role </th>
+                        <th> Action </th>
+                    </tr>
+                </thead>
+                <tbody> 
+                    {% for user in users %} 
+                    <tr> 
+                        <td> <a href="{% url 'update_user' user.id %}" class="text-primary">{{ user.username }} </a> </td>
+                        <td> {% if user.is_superuser %}  Admin {% else %} Staff
+                            </td> <td> <a href='{% url "delete_user" user.id %}' class="btn btn-danger"> Delete </a> {% endif %}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock %}

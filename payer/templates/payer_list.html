@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container" >
+
+    <div class="row">
+        <div class="clo-md-4">
+            <a href ='{% url "create_payer" %}' class ='btn btn-success'> Create New </a>
+        </div>
+    </div>
+    <br> <hr> 
+    <dvi class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th> Payer name </th>
+                        <th> Payer TaxID </th>
+                        <th> - </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payer  in payers %}
+                    <tr> 
+                        <td>  <a href ="{% url 'update_payer' payer.id %}" >{{payer.issuer_name }}  </a></td>
+                        <td>  {{ payer.issuer_id }} </td>
+                        <td> <a href='{% url "delete_payer"  payer.id %}'> Delete </a> </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </dvi>
+</div>
+
+{% endblock %}

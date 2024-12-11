@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+      <div class="row"> total Invocies =   {{total_count}} </div> 
+      <form method="get"> 
+          <div class="row"> 
+            <div class="col-md-3"> 
+           
+                <select class="form-control" name="page"> 
+                  <option> {{ page_number }}</option>
+                  {% for n in pages %}
+                  <option value="{{n}}" > {{n}}</option>
+                  {% endfor %}
+                    </select>
+           </div>
+          <div class="col-md-3"> <button type="submit"> search </button>
+          </div>
+
+        </div>
+
+       </form> 
+    <div class="row"> 
+        <table class="table">
+            <thead>
+                <tr> 
+                    <th>
+                            Document Url 
+                    </th>
+                    <th>
+                        Document ID
+                    </th>
+                    <th>
+                        Doucment Internal ID
+                    </th>
+                    <th> Receiver Name </th>
+                    <th> Total </th>
+                    <th> status </th>
+                </tr>
+            </thead>
+            {% for t in  token %}
+            <tr> 
+                <th> <a href ="{{ t.publicUrl}}" > Show Document   </a> </th>
+                <th> {{ t.submissionUUID }} </th>
+                <th> {{ t.internalId }} </th>
+                <th> {{ t.receiverName }}</th>
+                <th> {{ t.total }}</th>
+                <th> {{ t.status }}</th>
+            </tr>
+            {% endfor %}
+
+
+        </table>
+    </div>
+ </div>
+{% endblock %}

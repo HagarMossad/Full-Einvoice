@@ -1,0 +1,38 @@
+{% extends 'pages/base.html'%} 
+{% load i18n %} 
+{% load static %}
+{% block content %}
+
+<div class="container" >
+    <form>  
+        <input type="data" hidden value="init" name="init"> 
+        <button class="btn-primary" type="sybmit"> Update </button>
+    </form>
+    <div class="row">
+
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>  {% trans "Tax Code" %}</th>
+                        <th>  {% trans "Tax Descreption" %}  </th>
+                        <th>  {% trans "Tax Arabic Desc" %} </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tax  in taxes %}
+                    <tr> 
+                        <td>  <a href ="" >{{tax.Code }}  </a></td>
+                        <td>  {{ tax.Desc_en }} </td>
+                        <td>  {{ tax.Desc_ar }} </td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

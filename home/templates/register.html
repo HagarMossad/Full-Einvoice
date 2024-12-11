@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+    <div class="container">
+
+        <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+
+
+                    <div class="col-lg-5">  
+                         <img src="{% static 'assets/img/zone.jpeg' %}" alt="" width=600> 
+                        
+                        </div>
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h4 text-gray-900 mb-4">User Account!</h1>
+                            </div>
+                            <form class="user" method="post">
+                                {% csrf_token %}
+                                <div class="form-group row">
+                                    <div class="col-sm-12 mb-3 mb-sm-0">
+                                        <input type="text" class="form-control form-control-user" id="full_name" name="full_name"
+                                           required placeholder="Full Name">
+                                    </div>
+                                    
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail"
+                                       required placeholder="Email Address">
+                                </div>
+                                
+                                
+                                
+                               
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input type="password" class="form-control form-control-user"
+                                            id="exampleInputPassword" onchange=" ValidPass()"  placeholder="Password" required>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="password" class="form-control form-control-user"
+                                            id="exampleRepeatPassword" onchange=" ValidPass()" placeholder="Repeat Password" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="errorMessage" >
+                                    
+
+                                </div>
+                              
+                                <a id="submitreg" type="submit" class="btn btn-primary btn-user btn-block" onclick="Register()">
+                                   Create Account
+                                </a>
+                                <hr>
+
+                            </form>
+                            <hr>
+                           
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    
+
+
+
+<script type="text/javascript">
+
+function ValidPass(){
+    var p1 = document.getElementById('exampleInputPassword').value
+    var p2 = document.getElementById('exampleRepeatPassword').value
+
+    if (p1 && p2) {
+        if (p1 != p2 ){
+            document.getElementById("errorMessage").innerHTML = '<div class="alert alert-danger" role="alert">        Validation Erro   </div>'
+        
+        }
+        if (p1 == p2 ){
+            document.getElementById("errorMessage").innerHTML = "<div> </div>"
+        
+        }
+        
+
+       
+    }else{
+        document.getElementById("errorMessage").innerHTML = "<div> </div>"
+        
+    }
+
+}
+
+function Register(){
+    document.getElementById("submitreg").addEventListener("click", function(event){
+            event.preventDefault()
+    });
+    var user =  document.getElementById("full_name").value
+    var email = document.getElementById("exampleInputEmail").value
+    var password = document.getElementById("exampleInputPassword").value
+    var confirm_password = document.getElementById('exampleRepeatPassword').value
+   
+
+    $.ajax({
+        method :'post',
+        url : "{% url 'creat-user' %}" ,
+        headers: {'X-CSRFToken':  '{{ csrf_token }}'},
+        data : {'full_name' : user , 
+                'password' : password ,
+                'email' : email ,
+                'confrim_password' : confirm_password ,
+                },
+        success(e) {
+            console.log(e)
+            if (e.error){
+                document.getElementById("errorMessage").innerHTML = '<div class="alert alert-danger" role="alert">     '+  e.error+' </div>'
+        
+            }
+            if (e.data){
+                window.location.href = "{% url 'user_list'%}"
+            }
+           
+            
+        } 
+    
+    })
+}
+
+
+</script>
+
+{% endblock %}
